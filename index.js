@@ -45,10 +45,22 @@ if (process.env.NODE_ENV !== "development") {
 
 const app = express();
 app.use(session(sessionOptions));
+
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://nilcode123456.netlify.app",
+];
+
 app.use(
   cors({
     credentials: true,
-    origin: process.env.NETLIFY_URL || "*",
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     exposedHeaders: ["set-cookie"], // 新增暴露set-cookie头
   })
 );
