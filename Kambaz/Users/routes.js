@@ -3,10 +3,10 @@ import * as courseDao from "../Courses/dao.js";
 import * as enrollmentsDao from "../Enrollments/dao.js";
 
 export default function UserRoutes(app) {
-  const createUser = (req, res) => { };
-  const deleteUser = (req, res) => { };
-  const findAllUsers = (req, res) => { };
-  const findUserById = (req, res) => { };
+  const createUser = (req, res) => {};
+  const deleteUser = (req, res) => {};
+  const findAllUsers = (req, res) => {};
+  const findUserById = (req, res) => {};
   const updateUser = (req, res) => {
     const userId = req.params.userId;
     const userUpdates = req.body;
@@ -20,8 +20,7 @@ export default function UserRoutes(app) {
   const signup = (req, res) => {
     const user = dao.findUserByUsername(req.body.username);
     if (user) {
-      res.status(400).json(
-        { message: "Username already in use" });
+      res.status(400).json({ message: "Username already in use" });
       return;
     }
     const currentUser = dao.createUser(req.body);
@@ -35,13 +34,13 @@ export default function UserRoutes(app) {
     if (currentUser) {
       req.session.currentUser = currentUser;
 
-      req.session.cookie.secure = false; // 开发环境使用http
-      req.session.cookie.sameSite = "lax";
+      req.session.cookie.secure = true; // 开发环境使用http
+      req.session.cookie.sameSite = "none";
       req.session.cookie.maxAge = 30 * 24 * 60 * 60 * 1000; // 30天
 
-      req.session.save(err => {
+      req.session.save((err) => {
         if (err) {
-          console.error('保存会话错误:', err);
+          console.error("保存会话错误:", err);
           return res.status(500).json({ message: "会话保存失败" });
         }
         res.json(currentUser);
@@ -89,7 +88,7 @@ export default function UserRoutes(app) {
     const currentUser = req.session["currentUser"];
     const courses = courseDao.findCoursesForEnrolledUser(currentUser._id);
     res.json(courses);
-  }
+  };
 
   // const getCourses = (req, res) => {
   //   console.log('Session ID:', req.sessionID); // 调试日志
@@ -129,9 +128,8 @@ export default function UserRoutes(app) {
   app.get("/api/users/:userId/courses", findCoursesForEnrolledUser);
   app.get("/api/users/current/courses", courseDao.findAllCourses);
 
-
-  app.get('/check-session', (req, res) => {
-    console.log('Current session:', req.session); // 打印当前 session
+  app.get("/check-session", (req, res) => {
+    console.log("Current session:", req.session); // 打印当前 session
     if (req.session.currentUser) {
       res.json({ message: "User is logged in", user: req.session.currentUser });
     } else {
@@ -139,4 +137,3 @@ export default function UserRoutes(app) {
     }
   });
 }
-
