@@ -1,4 +1,4 @@
-import express from 'express'
+import express from "express";
 import session from "express-session";
 import fileStore from "session-file-store";
 
@@ -9,9 +9,9 @@ import cors from "cors";
 import "dotenv/config";
 import CourseRoutes from "./Kambaz/Courses/routes.js";
 import ModuleRoutes from "./Kambaz/Modules/routes.js";
-import AssignmentRoutes from "./Kambaz/Assignments/routes.js";  // 确保导入
-import PeopleRoutes from "./Kambaz/People/routes.js";  // 添加People路由
-import setupEnrollmentRoutes from "./Kambaz/Enrollments/routes.js";  // 添加Enrollment路由
+import AssignmentRoutes from "./Kambaz/Assignments/routes.js"; // 确保导入
+import PeopleRoutes from "./Kambaz/People/routes.js"; // 添加People路由
+import setupEnrollmentRoutes from "./Kambaz/Enrollments/routes.js"; // 添加Enrollment路由
 import Hello from "./Hello.js";
 
 const sessionOptions = {
@@ -22,11 +22,13 @@ const sessionOptions = {
   cookie: {
     secure: false, // 开发环境
     httpOnly: true,
-    sameSite: 'none',
+    sameSite: "none",
     maxAge: 7 * 24 * 60 * 60 * 1000,
-    domain: process.env.NODE_ENV === 'development' ?
-      'localhost' : process.env.NODE_SERVER_DOMAIN
-  }// 开发环境设为false，生产环境应为true
+    domain:
+      process.env.NODE_ENV === "development"
+        ? "localhost"
+        : process.env.NODE_SERVER_DOMAIN,
+  }, // 开发环境设为false，生产环境应为true
 };
 if (process.env.NODE_ENV === "development") {
   // 开发环境使用自签名证书
@@ -46,11 +48,10 @@ app.use(session(sessionOptions));
 app.use(
   cors({
     credentials: true,
-    origin: process.env.NETLIFY_URL || "http://localhost:5173",
-    exposedHeaders: ['set-cookie'] // 新增暴露set-cookie头
+    origin: process.env.NETLIFY_URL || "*",
+    exposedHeaders: ["set-cookie"], // 新增暴露set-cookie头
   })
 );
-
 
 app.use(express.json());
 
@@ -58,7 +59,7 @@ Hello(app);
 UserRoutes(app);
 CourseRoutes(app);
 ModuleRoutes(app);
-AssignmentRoutes(app);  // 确保这行代码存在
-PeopleRoutes(app);            // 应用People路由
-setupEnrollmentRoutes(app);   // 应用Enrollment路由
+AssignmentRoutes(app); // 确保这行代码存在
+PeopleRoutes(app); // 应用People路由
+setupEnrollmentRoutes(app); // 应用Enrollment路由
 app.listen(process.env.PORT || 4000);
